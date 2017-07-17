@@ -45,13 +45,32 @@ To install Helm see
 
 ## Installation via helm (includes cert gen)
 
-Topic to fill
-* download the "scf" package
-* unpack it
-* use the cert generation script
-* setup DNS for cloud foundry (*.DOMAIN pointing to the IP where CF is exposed)
-* use the helm cli to deploy scf
-* verify the deployment
+To install SCF
+* Get the distribution archive from **XXX**
+* Unpack this archive in a directory your choice.
+* Generate the certificates required by the SCF internals to talk to each other.
+  This is done by invoking **XXX** coming with the distribution, like so
+  ```
+**XXX**
+  ```
+* Choose the DOMAIN of SCF and use standard tools to set up the DNS so the IP address where SCF is exposed is reachable under `*.DOMAIN`.
+
+* Use Helm to deploy it, like so
+  ```
+  helm install helm \
+     --namespace ${NAMESPACE} \
+     --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
+     --set "env.DOMAIN=${DOMAIN}" \
+     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
+     --set "env.UAA_HOST=${UAA_HOST}" \
+     --set "env.UAA_PORT=${UAA_PORT}"
+  ```
+  The previous section gave a reference to the Helm documentation explaining how to install Helm itself.
+
+   The first two variables specify domain for the SCF api endpoint, and the password for the SCF administrator.
+   The remainder provide the access key and location of the UAA/Oauth2 server SCF should use.
+ 
+* Now that SCF is deployed it can be verified by **XXX**
 
 ## Point to CF docs
 
