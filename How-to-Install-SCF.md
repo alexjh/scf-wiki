@@ -14,5 +14,8 @@
 ## Kube verification
 ## SUSE UI Backlinks
 ## Helm installation reference
+
+* https://docs.helm.sh/using_helm/#quickstart
+
 ## Installation via helm (includes cert gen)
 ## Point to CF docs
