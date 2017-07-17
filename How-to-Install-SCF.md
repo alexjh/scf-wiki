@@ -71,7 +71,15 @@ To install SCF
    The first two variables specify domain for the SCF api endpoint, and the password for the SCF administrator.
    The remainder provide the access key and location of the UAA/Oauth2 server SCF should use.
  
-* Now that SCF is deployed it can be verified by **XXX**
+* Now that SCF is deployed it can be verified by running the smoke and CF acceptance tests (in this order). This is done via
+
+```
+kubectl create --namespace="${NAMESPACE}" --filename="XXX/smoke-tests.yml"
+```
+and
+```
+kubectl create --namespace="${NAMESPACE}" --filename="XXX/acceptance-tests.yml"
+```
 
 ## Point to CF docs
 
