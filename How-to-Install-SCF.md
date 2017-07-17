@@ -51,10 +51,10 @@ To install SCF
 * Generate the certificates required by the SCF internals to talk to each other.
   This is done by invoking **XXX** coming with the distribution, like so
   ```
-**XXX**
+XXX
   ```
-* Choose the DOMAIN of SCF and use standard tools to set up the DNS so the IP address where SCF is exposed is reachable under `*.DOMAIN`.
 
+* Choose the DOMAIN of SCF and use standard tools to set up the DNS so the IP address where SCF is exposed is reachable under `*.DOMAIN`.
 * Use Helm to deploy it, like so
   ```
   helm install helm \
