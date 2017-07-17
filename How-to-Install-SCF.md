@@ -2,16 +2,16 @@
 
 The various machines (`api`, `kube`, and `node`) of the k8s cluster must be configured in a particular way to support the execution of `SCF`. These requirements are, in general:
 
-* `cgroup_enable` memory
-* `swapaccount` enable
-* `docker info` must show `overlay2`
-* `kube-dns` must be be running and `4/4 ready`
-* Either `ntp` or `systemd-timesyncd` must be installed and active
-* A storage class has to exist in K8s
-* Privileged must be enabled in `kube-apiserver`
-* Privileged must be enabled in `kubelet`
-* DNS has to resolve the `SCF_DOMAIN`.
-* `systemd` setting `TasksMax` must be set to infinity
+* `cgroup_enable` memory.
+* `swapaccount` enable.
+* `docker info` must show `overlay2`.
+* `kube-dns` must be be running and `4/4 ready`.
+* Either `ntp` or `systemd-timesyncd` must be installed and active.
+* The k8s cluster must have a storage class has to exist.
+* Privileged must be enabled in `kube-apiserver`.
+* Privileged must be enabled in `kubelet`.
+* DNS has to resolve the domain stored in the environment variable `SCF_DOMAIN`.
+* The `systemd` setting `TasksMax` must be set to infinity.
 
 ## Kube verification
 
