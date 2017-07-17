@@ -1,6 +1,6 @@
 ## Requirements for Kube (point to Vagrant for non-kube-can-setup-people)
 
-The various machines (`api`, `kube`, and `node`) used to run the k8s cluster must be configured in a particular way to support the execution of SCF. These requirements are, in general:
+The various machines (`api`, `kube`, and `node`) of the k8s cluster must be configured in a particular way to support the execution of `SCF`. These requirements are, in general:
 
 * `cgroup_enable` memory
 * `swapaccount` enable
