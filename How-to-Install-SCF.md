@@ -17,7 +17,19 @@ The various machines (`api`, `kube`, and `node`) used to run the k8s cluster mus
 
 For ease of verification of these requirements a script (`k8s-ready-state-check.sh`) is made available which contains the necessary checks.
 
-Invoking this script via `k8s-ready-state-check.sh -v` will provide help. It will especially note the various machine categories. When invoked with the name of machine category (`api`, `kube`, and `node`) the script will run the tests applicable to this category. Positive results are prefixed with `Verified: `, whereas failed requirements are prefixed with `Configuration problem detected:`.
+To get help invoke this script via
+```
+k8s-ready-state-check.sh -v
+```
+
+This will especially note the various machine categories. When invoked with the name of machine category (`api`, `kube`, and `node`), i.e. like
+
+```
+k8s-ready-state-check.sh kube
+```
+the script will run the tests applicable to the named category.
+Positive results are prefixed with `Verified: `,
+whereas failed requirements are prefixed with `Configuration problem detected:`.
 
 ## SUSE UI Backlinks
 ## Helm installation reference
