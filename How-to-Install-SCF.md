@@ -2,14 +2,14 @@
 
 * `cgroup_enable` memory
 * `swapaccount` enable
-* `docker info` should show `overlay2`
-* `kube-dns` should be running and `4/4 ready`
+* `docker info` must show `overlay2`
+* `kube-dns` must be be running and `4/4 ready`
 * Either `ntp` or `systemd-timesyncd` must be installed and active
-* A storage class should exist in K8s
+* A storage class has to exist in K8s
 * Privileged must be enabled in `kube-apiserver`
 * Privileged must be enabled in `kubelet`
 * DNS has to resolve the `SCF_DOMAIN`.
-* `systemd`s `TasksMax` must be set to infinity
+* `systemd` setting `TasksMax` must be set to infinity
 
 ## Kube verification
 ## SUSE UI Backlinks
