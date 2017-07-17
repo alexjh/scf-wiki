@@ -16,8 +16,8 @@ The various machines (`api`, `kube`, and `node`) of the k8s cluster must be conf
 |Category|Explanation|
 |---|---|
 |api| The hosts for the k8s master nodes |
-|kube| The hosts for the k8s worker nodes |
-|node| **unknown** |
+|kube| Requirements of the cluster itself, via `kubectl` |
+|node| The hosts for the k8s worker nodes |
 
 ## Kube verification
 
