@@ -37,6 +37,18 @@ whereas failed requirements are prefixed with `Configuration problem detected:`.
 * https://docs.helm.sh/using_helm/#quickstart
 
 ## Installation via helm (includes cert gen)
+
+Topic to fill
+* download the "scf" package
+* unpack it
+* use the cert generation script
+* setup DNS for cloud foundry (*.DOMAIN pointing to the IP where CF is exposed)
+* use the helm cli to deploy scf
+* verify the deployment
+
+
+
+
 ## Point to CF docs
 
 * https://docs.cloudfoundry.org/
