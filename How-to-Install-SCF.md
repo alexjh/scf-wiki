@@ -7,7 +7,7 @@ The various machines (`api`, `kube`, and `node`) of the k8s cluster must be conf
 * `docker info` must show `overlay2`.
 * `kube-dns` must be be running and `4/4 ready`.
 * Either `ntp` or `systemd-timesyncd` must be installed and active.
-* The k8s cluster must have a storage class has to exist.
+* The k8s cluster must have a storage class SCF can refer to.
 * Privileged must be enabled in `kube-apiserver`.
 * Privileged must be enabled in `kubelet`.
 * DNS has to resolve the domain stored in the environment variable `SCF_DOMAIN`.
