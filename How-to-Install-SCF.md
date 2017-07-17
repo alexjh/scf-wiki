@@ -19,3 +19,5 @@
 
 ## Installation via helm (includes cert gen)
 ## Point to CF docs
+
+* https://docs.cloudfoundry.org/
