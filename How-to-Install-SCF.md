@@ -2,8 +2,7 @@
 
 The various machines (`api`, `kube`, and `node`) of the k8s cluster must be configured in a particular way to support the execution of `SCF`. These requirements are, in general:
 
-* `cgroup_enable` memory.
-* `swapaccount` enable.
+* Kernel parameters `cgroup_enable=memory` and `swapaccount=1`
 * `docker info` must show `overlay2`.
 * `kube-dns` must be be running and `4/4 ready`.
 * Either `ntp` or `systemd-timesyncd` must be installed and active.
