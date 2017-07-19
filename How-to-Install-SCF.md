@@ -56,7 +56,7 @@ To install SCF
 * Get the distribution archive from **XXX**
 * Unpack this archive in a directory your choice.
 
-* Get the certification generator distribution from `**XXX**/scf-cert-generator.linux-amd64.tgz`.
+* Get the certification generator distribution from **XXX**`/scf-cert-generator.linux-amd64.tgz`.
 * Unpack the tarball into a directory `D` of your choice
 * Then invoke the generator via
   ```
