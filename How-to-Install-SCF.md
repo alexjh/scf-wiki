@@ -45,16 +45,30 @@ To install Helm see
 ## Installation via helm (includes cert gen)
 
 To install SCF
+* Choose the `DOMAIN` of SCF and use standard tools to set up the DNS
+  so the IP address where SCF is exposed is reachable under `*.DOMAIN`.
+
+* Choose the `NAMESPACE` of SCF, i.e. the k8s namespace the SCF components will run in later.
+
+* Save both choices to environment variables of the same name.
+  These are used in the coming commands.
+
 * Get the distribution archive from **XXX**
 * Unpack this archive in a directory your choice.
-* Generate the certificates required by the SCF internals to talk to each other.
-  This is done by invoking **XXX** coming with the distribution, like so
 
+* Get the certification generator distribution from `**XXX**/scf-cert-generator.linux-amd64.tgz`.
+* Unpack the tarball into a directory `D` of your choice
+* Then invoke the generator via
   ```
-  XXX
+   cd D
+   cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE}
   ```
+  By default the results are written into the current directory.
+  If that does not suit use `-o` to change that location. The directory must exist.
+  (**XXX** We may have to set it here to match other places expectations, i.e. helm).
 
-* Choose the DOMAIN of SCF and use standard tools to set up the DNS so the IP address where SCF is exposed is reachable under `*.DOMAIN`.
+* We now have the certificates required by the SCF internals to talk to each other.
+
 * Use Helm to deploy it, like so
   ```
   helm install helm \
@@ -64,6 +78,8 @@ To install SCF
      --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
      --set "env.UAA_HOST=${UAA_HOST}" \
      --set "env.UAA_PORT=${UAA_PORT}"
+
+     XXX the location of the charts and certs is missing here...
   ```
   The previous section gave a reference to the Helm documentation explaining how to install Helm itself.
 
