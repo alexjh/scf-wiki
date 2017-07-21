@@ -54,14 +54,12 @@ To install SCF
   These are used in the coming commands.
 
 * Get the distribution archive from **XXX**
-* Unpack this archive in a directory your choice.
+* Unpack this archive in a directory your choice. In the following discussion this directory is called `DA`. Replace its uses with the name of your own choice.
 
-* Get the certification generator distribution from **XXX**`/scf-cert-generator.linux-amd64.tgz`.
-* Unpack the tarball into a directory `D` of your choice
-* Then invoke the generator via
+* Invoke the certification generator via
   ```
-   cd D
-   cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE}
+   cd DA
+   cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o helm
   ```
   By default the results are written into the current directory.
   If that does not suit use `-o` to change that location. The directory must exist.
@@ -71,6 +69,7 @@ To install SCF
 
 * Use Helm to deploy it, like so
   ```
+  cd DA/helm
   helm install helm \
      --namespace ${NAMESPACE} \
      --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
@@ -89,11 +88,11 @@ To install SCF
 * Now that SCF is deployed it can be verified by running the smoke and CF acceptance tests (in this order). This is done via
 
    ```
-   kubectl create --namespace="${NAMESPACE}" --filename="XXX/smoke-tests.yml"
+   kubectl create --namespace="${NAMESPACE}" --filename="DA/cf/bosh-task/smoke-tests.yml"
    ```
    and
    ```
-   kubectl create --namespace="${NAMESPACE}" --filename="XXX/acceptance-tests.yml"
+   kubectl create --namespace="${NAMESPACE}" --filename="DA/cf/bosh-task/acceptance-tests.yml"
    ```
 
 ## Point to CF docs
