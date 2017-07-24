@@ -1,4 +1,4 @@
-## Requirements for Kube (point to Vagrant for non-kube-can-setup-people)
+## Requirements for Kube
 
 The various machines (`api`, `kube`, and `node`) of the k8s cluster must be configured in a particular way to support the execution of `SCF`. These requirements are, in general:
 
@@ -17,6 +17,8 @@ The various machines (`api`, `kube`, and `node`) of the k8s cluster must be conf
 |api| Requirements on the hosts for the k8s master nodes (running `apiserver`) |
 |kube| Requirements of the cluster itself, via `kubectl` |
 |node| Requirements on the hosts for the k8s worker nodes (running `kubelet`) |
+
+An easy way of setting up a small single-machine k8s cluster with all the necessary properties is to use the Vagrant definition in the SCF repository. The details of this approach are explained in https://github.com/SUSE/scf/blob/develop/README.md#deploying-scf-on-vagrant
 
 ## Kube verification
 
