@@ -86,7 +86,39 @@ To install SCF
 
    The first two variables specify domain for the SCF api endpoint, and the password for the SCF administrator.
    The remainder provide the access key and location of the UAA/Oauth2 server SCF should use.
- 
+
+* Under the assumption that Vagrant is used to run a micro-cluster a suitable set of commands is shown below. It is assumed that the current working directory is the checkout of SCF from which vagrant was started:
+
+   ```
+   # Retrieve distribution
+   wget XXX
+
+   # Unpack
+   mkdir DA
+   cd DA
+   unzip ../XXX
+
+   # Configuration
+   export DOMAIN=cf-dev.io
+   export NAMESPACE=scf
+   export CLUSTER_ADMIN_PASSWORD=
+   export UAA_ADMIN_CLIENT_SECRET
+   export UAA_HOST=uaa.${DOMAIN}
+   export UAA_PORT=2793
+
+   # Generate your certs
+   cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o helm
+
+   # Deploy
+   helm install helm \
+      --namespace ${NAMESPACE} \
+      --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
+      --set "env.DOMAIN=${DOMAIN}" \
+      --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
+      --set "env.UAA_HOST=${UAA_HOST}" \
+      --set "env.UAA_PORT=${UAA_PORT}"
+   ```
+
 * Now that SCF is deployed it can be verified by running the smoke and CF acceptance tests (in this order). This is done via
 
    ```
