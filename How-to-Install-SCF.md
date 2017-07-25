@@ -11,6 +11,7 @@ The various machines (`api`, `kube`, and `node`) of the k8s cluster must be conf
 * Privileged must be enabled in `kubelet`.
 * DNS has to resolve the domain stored in the environment variable `SCF_DOMAIN`.
 * The `systemd` setting `TasksMax` must be set to infinity.
+* Helm's Tiller has to be installed and active.
 
 |Category|Explanation|
 |---|---|
