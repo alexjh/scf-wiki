@@ -100,16 +100,16 @@ To install SCF
   ```
   helm install helm/uaa \
      --namespace ${NAMESPACE} \
-     --values certs/uaa-cert-values.yaml
+     --values certs/uaa-cert-values.yaml \
      --set "env.DOMAIN=${DOMAIN}" \
-     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
+     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}"
   ```
 
 * With UAA deployed, use Helm to deploy SCF.
   ```
   helm install helm/cf \
      --namespace ${NAMESPACE} \
-     --values certs/scf-cert-values.yaml
+     --values certs/scf-cert-values.yaml \
      --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
      --set "env.DOMAIN=${DOMAIN}" \
      --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
