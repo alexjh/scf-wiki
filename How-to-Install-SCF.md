@@ -90,7 +90,7 @@ To install SCF
 * Create custom certs for the deployment by invoking the certification generator:
   ```
   mkdir certs
-  cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
+  ./cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
   ```
   Note: Choosing a different output directory (`certs`) here will require matching changes to the commands deploying the helm charts, below.
 
