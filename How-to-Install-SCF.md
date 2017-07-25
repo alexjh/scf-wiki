@@ -101,14 +101,11 @@ To install SCF
   helm install helm/uaa \
      --namespace ${NAMESPACE} \
      --values certs/uaa-cert-values.yaml
-     --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
      --set "env.DOMAIN=${DOMAIN}" \
      --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
-     --set "env.UAA_HOST=${UAA_HOST}" \
-     --set "env.UAA_PORT=${UAA_PORT}"
   ```
 
-* With UAA up, use Helm to deploy SCF.
+* With UAA deployed, use Helm to deploy SCF.
   ```
   helm install helm/cf \
      --namespace ${NAMESPACE} \
@@ -120,13 +117,17 @@ To install SCF
      --set "env.UAA_PORT=${UAA_PORT}"
   ```
 
-* Now that SCF is deployed its operation can be verified by running the CF smoke and acceptance tests (in this order). This is done via
+* Now that SCF is deployed as well its operation can be verified by running the CF smoke and acceptance tests (in this order). This is done via
    ```
-   kubectl create --namespace="${NAMESPACE}" --filename="kube/cf/bosh-task/smoke-tests.yml"
+   kubectl create \
+      --namespace="${NAMESPACE}" \
+      --filename="kube/cf/bosh-task/smoke-tests.yml"
    ```
    and
    ```
-   kubectl create --namespace="${NAMESPACE}" --filename="kube/cf/bosh-task/acceptance-tests.yml"
+   kubectl create \
+      --namespace="${NAMESPACE}" \
+      --filename="kube/cf/bosh-task/acceptance-tests.yml"
    ```
 
 ## Point to CF docs
