@@ -47,87 +47,82 @@ To install Helm see
 
 ## Installation via helm (includes cert gen)
 
+Consider the following an annotated session demonstrating how to deploy SCF/UAA on k8s. In other words, explanations interspersed with example commands and vice versa.
+
 To install SCF
-* Choose the `DOMAIN` of SCF and use standard tools to set up the DNS
+* __Choose__ the `DOMAIN` of SCF and use standard tools to set up the DNS
   so the IP address where SCF is exposed is reachable under `*.DOMAIN`.
-
-* Choose the `NAMESPACE` of SCF, i.e. the k8s namespace the SCF components will run in later.
-
-* Save both choices to environment variables of the same name.
+   ```
+   export DOMAIN=cf-dev.io
+   ```
+* __Choose__ the `NAMESPACE` of SCF, i.e. the k8s namespace the SCF components will run in later.
+   ```
+   export NAMESPACE=scf
+   ```
+* __Choose__ a password for your SCF deployment.
+   ```
+   export CLUSTER_ADMIN_PASSWORD=changeme
+   ```
+* Save all choices to environment variables.
   These are used in the coming commands.
-
 * Get the distribution archive from **XXX**
-* Unpack this archive in a directory your choice. In the following discussion this directory is called `DA`. Replace its uses with the name of your own choice.
-
-* Invoke the certification generator via
   ```
-   cd DA
-   cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o helm
+  wget XXX/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
   ```
-  By default the results are written into the current directory.
-  If that does not suit use `-o` to change that location. The directory must exist.
-  (**XXX** We may have to set it here to match other places expectations, i.e. helm).
-
-* We now have the certificates required by the SCF internals to talk to each other.
-
-* Use Helm to deploy it, like so
+* Unpack this archive in a directory your choice.
   ```
-  cd DA/helm
-  helm install helm \
+  mkdir deploy
+  cd    deploy
+  unzip ../scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
+  ```
+  We now have the helm charts for SCF and UAA in a subdirectory `helm`.
+  Additional k8s configuration files can be found under `kube`.
+  The `scripts` directory contains helpers for cert generation.
+
+* Create custom certs for the deployment by invoking the certification generator:
+  ```
+  mkdir certs
+  cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
+  ```
+  Note: Choosing a different output directory (`certs`) will require matching changes to the commands deploying the helm charts.
+
+* We now have the certificates required by the various components to talk to each other (SCF internals, UAA internals, SCF to UAA).
+
+* Use Helm to deploy UAA. Remember that the previous section gave a reference to the Helm documentation explaining how to install Helm itself. Remember also that in the Vagrant-based setup `helm` is already installed and ready.
+  ```
+  export UAA_HOST=uaa.${DOMAIN}
+  export UAA_PORT=2793
+  export UAA_ADMIN_CLIENT_SECRET=................XXX...
+
+  helm install helm/uaa \
      --namespace ${NAMESPACE} \
+     --values certs/uaa-cert-values.yaml
      --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
      --set "env.DOMAIN=${DOMAIN}" \
      --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
      --set "env.UAA_HOST=${UAA_HOST}" \
      --set "env.UAA_PORT=${UAA_PORT}"
-
-     XXX the location of the charts and certs is missing here...
   ```
-  The previous section gave a reference to the Helm documentation explaining how to install Helm itself.
 
-   The first two variables specify domain for the SCF api endpoint, and the password for the SCF administrator.
-   The remainder provide the access key and location of the UAA/Oauth2 server SCF should use.
+* With UAA up, use Helm to deploy SCF.
+  ```
+  helm install helm/cf \
+     --namespace ${NAMESPACE} \
+     --values certs/scf-cert-values.yaml
+     --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
+     --set "env.DOMAIN=${DOMAIN}" \
+     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
+     --set "env.UAA_HOST=${UAA_HOST}" \
+     --set "env.UAA_PORT=${UAA_PORT}"
+  ```
 
-* Under the assumption that Vagrant is used to run a micro-cluster a suitable set of commands is shown below. It is assumed that the current working directory is the checkout of SCF from which vagrant was started:
-
+* Now that SCF is deployed its operation can be verified by running the CF smoke and acceptance tests (in this order). This is done via
    ```
-   # Retrieve distribution
-   wget XXX
-
-   # Unpack
-   mkdir DA
-   cd DA
-   unzip ../XXX
-
-   # Configuration
-   export DOMAIN=cf-dev.io
-   export NAMESPACE=scf
-   export CLUSTER_ADMIN_PASSWORD=
-   export UAA_ADMIN_CLIENT_SECRET
-   export UAA_HOST=uaa.${DOMAIN}
-   export UAA_PORT=2793
-
-   # Generate your certs
-   cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o helm
-
-   # Deploy
-   helm install helm \
-      --namespace ${NAMESPACE} \
-      --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
-      --set "env.DOMAIN=${DOMAIN}" \
-      --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
-      --set "env.UAA_HOST=${UAA_HOST}" \
-      --set "env.UAA_PORT=${UAA_PORT}"
-   ```
-
-* Now that SCF is deployed it can be verified by running the smoke and CF acceptance tests (in this order). This is done via
-
-   ```
-   kubectl create --namespace="${NAMESPACE}" --filename="DA/cf/bosh-task/smoke-tests.yml"
+   kubectl create --namespace="${NAMESPACE}" --filename="kube/cf/bosh-task/smoke-tests.yml"
    ```
    and
    ```
-   kubectl create --namespace="${NAMESPACE}" --filename="DA/cf/bosh-task/acceptance-tests.yml"
+   kubectl create --namespace="${NAMESPACE}" --filename="kube/cf/bosh-task/acceptance-tests.yml"
    ```
 
 ## Point to CF docs
