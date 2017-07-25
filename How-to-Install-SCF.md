@@ -59,6 +59,11 @@ To install SCF
    ```
    export NAMESPACE=scf
    ```
+* __Choose__ the `NAMESPACE` of UAA, i.e. the k8s namespace the UAA components will run in later.
+  This assumes that we use the UAA deployment coming with the distribution.
+   ```
+   export UAA_NAMESPACE=uaa
+   ```
 * __Choose__ a password for your SCF deployment.
    ```
    export CLUSTER_ADMIN_PASSWORD=changeme
@@ -99,7 +104,7 @@ To install SCF
 * Use Helm to deploy UAA. Remember that the previous section gave a reference to the Helm documentation explaining how to install Helm itself. Remember also that in the Vagrant-based setup `helm` is already installed and ready.
   ```
   helm install helm/uaa \
-     --namespace ${NAMESPACE} \
+     --namespace ${UAA_NAMESPACE} \
      --values certs/uaa-cert-values.yaml \
      --set "env.DOMAIN=${DOMAIN}" \
      --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}"
