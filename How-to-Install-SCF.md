@@ -87,6 +87,16 @@ To install SCF
    ```
    The class chosen here is the class created by the vagrant setup.
 
+   Further, in vagrant it is possible to create a proper class with
+   ```
+   kubectl get storageclass persistent 2>/dev/null || {
+       perl -p -e 's@storage.k8s.io/v1beta1@storage.k8s.io/v1@g' \
+           "lube/uaa/kube-test/storage-class-host-path.yml" | \
+       kubectl create -f -
+   }
+   ```
+   In other other environments the setup of a storage class can be more complex.
+
 * Save all choices to environment variables.
   These are used in the coming commands.
 * Get the distribution archive from **XXX**
@@ -161,6 +171,12 @@ To install SCF
    export UAA_ADMIN_CLIENT_SECRET=uaa-admin-client-secret
    export KUBE_HOST_IP=192.168.77.77
    export STORAGECLASS=persistent
+
+   kubectl get storageclass persistent 2>/dev/null || {
+       perl -p -e 's@storage.k8s.io/v1beta1@storage.k8s.io/v1@g' \
+           "lube/uaa/kube-test/storage-class-host-path.yml" | \
+       kubectl create -f -
+   }
 
    wget XXX/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
 
