@@ -81,6 +81,12 @@ To install SCF
    ```
    The IP address chosen here is what the vagrant setup uses.
 
+* __Choose__ the name of the kube storage class to use.
+   ```
+   export STORAGECLASS=persistent
+   ```
+   The class chosen here is the class created by the vagrant setup.
+
 * Save all choices to environment variables.
   These are used in the coming commands.
 * Get the distribution archive from **XXX**
@@ -109,6 +115,7 @@ To install SCF
 * Use Helm to deploy UAA. Remember that the previous section gave a reference to the Helm documentation explaining how to install Helm itself. Remember also that in the Vagrant-based setup `helm` is already installed and ready.
    ```
    helm install helm/uaa \
+     --set kube.storage_class.persistent=${STORAGECLASS} \
      --namespace ${UAA_NAMESPACE} \
      --values certs/uaa-cert-values.yaml \
      --set "env.DOMAIN=${DOMAIN}" \
@@ -119,6 +126,7 @@ To install SCF
 * With UAA deployed, use Helm to deploy SCF.
    ```
    helm install helm/cf \
+     --set kube.storage_class.persistent=${STORAGECLASS} \
      --namespace ${NAMESPACE} \
      --values certs/scf-cert-values.yaml \
      --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
@@ -152,6 +160,7 @@ To install SCF
    export UAA_PORT=2793
    export UAA_ADMIN_CLIENT_SECRET=uaa-admin-client-secret
    export KUBE_HOST_IP=192.168.77.77
+   export STORAGECLASS=persistent
 
    wget XXX/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
 
@@ -163,6 +172,7 @@ To install SCF
    ./cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
 
    helm install helm/uaa \
+     --set kube.storage_class.persistent=${STORAGECLASS} \
      --namespace ${UAA_NAMESPACE} \
      --values certs/uaa-cert-values.yaml \
      --set "env.DOMAIN=${DOMAIN}" \
@@ -170,6 +180,7 @@ To install SCF
      --set "kube.external_ip=${KUBE_HOST_IP}"
 
    helm install helm/cf \
+     --set kube.storage_class.persistent=${STORAGECLASS} \
      --namespace ${NAMESPACE} \
      --values certs/scf-cert-values.yaml \
      --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
