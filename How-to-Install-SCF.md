@@ -2,14 +2,13 @@
 
 The various machines (`api`, `kube`, and `node`) of the kubernetes cluster must be configured in a particular way to support the execution of `SCF`. These requirements are, in general:
 
-* Kernel parameters `cgroup_enable=memory` and `swapaccount=1`
-* `docker info` must show `overlay2`.
+* Kernel parameters `swapaccount=1`
+* `docker info` must not show `aufs`.
 * `kube-dns` must be be running and `4/4 ready`.
 * Either `ntp` or `systemd-timesyncd` must be installed and active.
 * The kubernetes cluster must have a storage class SCF can refer to.
-* Privileged must be enabled in `kube-apiserver`.
+* Privileged container must be enabled in `kube-apiserver`. See https://kubernetes.io/docs/admin/kube-apiserver
 * Privileged must be enabled in `kubelet`.
-* DNS has to resolve the domain stored in the environment variable `SCF_DOMAIN`.
 * The `systemd` setting `TasksMax` must be set to infinity.
 * Helm's Tiller has to be installed and active.
 
