@@ -85,41 +85,41 @@ To install SCF
 * Save all choices to environment variables.
   These are used in the coming commands.
 * Get the distribution archive from **XXX**
-  ```
-  wget XXX/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
-  ```
+   ```
+   wget XXX/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
+   ```
 * Unpack this archive in a directory your choice.
-  ```
-  mkdir deploy
-  cd    deploy
-  unzip ../scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
-  ```
+   ```
+   mkdir deploy
+   cd    deploy
+   unzip ../scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
+   ```
   We now have the helm charts for SCF and UAA in a subdirectory `helm`.
   Additional configuration files are found under `kube`.
   The `scripts` directory contains helpers for cert generation.
 
 * Create custom certs for the deployment by invoking the certification generator:
-  ```
-  mkdir certs
-  ./cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
-  ```
+   ```
+   mkdir certs
+   ./cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
+   ```
   Note: Choosing a different output directory (`certs`) here will require matching changes to the commands deploying the helm charts, below.
 
 * We now have the certificates required by the various components to talk to each other (SCF internals, UAA internals, SCF to UAA).
 
 * Use Helm to deploy UAA. Remember that the previous section gave a reference to the Helm documentation explaining how to install Helm itself. Remember also that in the Vagrant-based setup `helm` is already installed and ready.
-  ```
-  helm install helm/uaa \
+   ```
+   helm install helm/uaa \
      --namespace ${UAA_NAMESPACE} \
      --values certs/uaa-cert-values.yaml \
      --set "env.DOMAIN=${DOMAIN}" \
      --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
      --set "kube.external_ip=${KUBE_HOST_IP}"
-  ```
+   ```
 
 * With UAA deployed, use Helm to deploy SCF.
-  ```
-  helm install helm/cf \
+   ```
+   helm install helm/cf \
      --namespace ${NAMESPACE} \
      --values certs/scf-cert-values.yaml \
      --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
@@ -128,7 +128,7 @@ To install SCF
      --set "env.UAA_HOST=${UAA_HOST}" \
      --set "env.UAA_PORT=${UAA_PORT}" \
      --set "kube.external_ip=${KUBE_HOST_IP}"
-  ```
+   ```
 
 * Now that SCF is deployed as well its operation can be verified by running the CF smoke and acceptance tests (in this order). This is done via
    ```
@@ -139,6 +139,56 @@ To install SCF
    and
    ```
    kubectl create \
+      --namespace="${NAMESPACE}" \
+      --filename="kube/cf/bosh-task/acceptance-tests.yml"
+   ```
+
+* Pulling everything together we have
+   ```
+   export DOMAIN=cf-dev.io
+   export NAMESPACE=scf
+   export UAA_NAMESPACE=uaa
+   export CLUSTER_ADMIN_PASSWORD=changeme
+   export UAA_HOST=uaa.${DOMAIN}
+   export UAA_PORT=2793
+   export UAA_ADMIN_CLIENT_SECRET=uaa-admin-client-secret
+   export KUBE_HOST_IP=192.168.77.77
+
+   wget XXX/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
+
+   mkdir deploy
+   cd    deploy
+   unzip ../scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
+
+   mkdir certs
+   ./cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
+
+   helm install helm/uaa \
+     --namespace ${UAA_NAMESPACE} \
+     --values certs/uaa-cert-values.yaml \
+     --set "env.DOMAIN=${DOMAIN}" \
+     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
+     --set "kube.external_ip=${KUBE_HOST_IP}"
+
+   helm install helm/cf \
+     --namespace ${NAMESPACE} \
+     --values certs/scf-cert-values.yaml \
+     --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
+     --set "env.DOMAIN=${DOMAIN}" \
+     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
+     --set "env.UAA_HOST=${UAA_HOST}" \
+     --set "env.UAA_PORT=${UAA_PORT}" \
+     --set "kube.external_ip=${KUBE_HOST_IP}"
+
+    # Wait for completion (pod-status -w)
+
+    kubectl create \
+      --namespace="${NAMESPACE}" \
+      --filename="kube/cf/bosh-task/smoke-tests.yml"
+
+    # Wait for completion
+
+    kubectl create \
       --namespace="${NAMESPACE}" \
       --filename="kube/cf/bosh-task/acceptance-tests.yml"
    ```
