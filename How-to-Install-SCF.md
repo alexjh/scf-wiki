@@ -76,6 +76,12 @@ To install SCF
    ```
    These variables hold the configuration SCF has to know about the UAA to talk to, i.e. location (host, port), and authentication
 
+* __Choose__ the IP address of the k8s host.
+   ```
+   export K8S_HOST_IP=192.168.77.77
+   ```
+   The IP address chosen here is what the vagrant setup uses.
+
 * Save all choices to environment variables.
   These are used in the coming commands.
 * Get the distribution archive from **XXX**
@@ -107,7 +113,8 @@ To install SCF
      --namespace ${UAA_NAMESPACE} \
      --values certs/uaa-cert-values.yaml \
      --set "env.DOMAIN=${DOMAIN}" \
-     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}"
+     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
+     --set "kube.external_ip=${K8S_HOST_IP}"
   ```
 
 * With UAA deployed, use Helm to deploy SCF.
@@ -119,7 +126,8 @@ To install SCF
      --set "env.DOMAIN=${DOMAIN}" \
      --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
      --set "env.UAA_HOST=${UAA_HOST}" \
-     --set "env.UAA_PORT=${UAA_PORT}"
+     --set "env.UAA_PORT=${UAA_PORT}" \
+     --set "kube.external_ip=${K8S_HOST_IP}"
   ```
 
 * Now that SCF is deployed as well its operation can be verified by running the CF smoke and acceptance tests (in this order). This is done via
