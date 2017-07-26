@@ -219,6 +219,11 @@ To install SCF
       --filename="kube/cf/bosh-task/acceptance-tests.yml"
    ```
 
+## Removal/Cleanup via helm
+
+Use `helm list` to locate the releases for the SCF and UAA charts.
+Then use `helm delete` to remove them.
+
 ## Point to CF docs
 
 * https://docs.cloudfoundry.org/
