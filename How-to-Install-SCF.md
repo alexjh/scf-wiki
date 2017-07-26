@@ -103,9 +103,11 @@ To install SCF
 
 * Save all choices to environment variables.
   These are used in the coming commands.
-* Get the distribution archive from **XXX**
+
+* Get the distribution archive from https://github.com/SUSE/scf/releases
+  For example
    ```
-   wget XXX/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
+   wget https://github.com/SUSE/scf/archive/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
    ```
 * Unpack this archive in a directory your choice.
    ```
