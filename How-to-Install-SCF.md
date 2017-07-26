@@ -44,7 +44,7 @@ To install Helm see
 
 * https://docs.helm.sh/using_helm/#quickstart
 
-## Installation via helm (includes cert gen)
+## Installation via helm, including the generation of certs
 
 Consider the following an annotated session demonstrating how to deploy SCF/UAA on kubernetes. In other words, explanations interspersed with example commands and vice versa.
 
@@ -231,6 +231,6 @@ This will especially remove all the associated volumes as well.
 
 After that use `helm list` to locate the releases for the SCF and UAA charts and `helm delete` to remove them at helm's level as well.
 
-## Point to CF docs
+## CF documentation
 
 * https://docs.cloudfoundry.org/
