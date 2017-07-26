@@ -221,8 +221,15 @@ To install SCF
 
 ## Removal/Cleanup via helm
 
-Use `helm list` to locate the releases for the SCF and UAA charts.
-Then use `helm delete` to remove them.
+First delete the running system at the kube level
+
+```
+    kubectl delete namespace $UAA_NAMESPACE
+    kubectl delete namespace $NAMESPACE
+```
+This will especially remove all the associated volumes as well.
+
+After that use `helm list` to locate the releases for the SCF and UAA charts and `helm delete` to remove them at helm's level as well.
 
 ## Point to CF docs
 
