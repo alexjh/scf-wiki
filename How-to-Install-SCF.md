@@ -20,7 +20,7 @@ The various machines (`api`, `kube`, and `node`) of the kubernetes cluster must 
 
 An easy way of setting up a small single-machine kubernetes cluster with all the necessary properties is to use the Vagrant definition in the SCF repository. The details of this approach are explained in https://github.com/SUSE/scf/blob/develop/README.md#deploying-scf-on-vagrant
 
-## Kube verification
+## Verifying the Kube
 
 For ease of verification of these requirements a script (`kube-ready-state-check.sh`) is made available which contains the necessary checks.
 
@@ -36,15 +36,18 @@ the script will run the tests applicable to the named category.
 Positive results are prefixed with `Verified: `,
 whereas failed requirements are prefixed with `Configuration problem detected:`.
 
-## SUSE UI Backlinks
-## Helm installation reference
+## SUSE Web UI
+
+__TODO__ __XXX__
+
+## Helm installation
 
 SCF uses Helm charts to deploy on kubernetes clusters.
 To install Helm see
 
 * https://docs.helm.sh/using_helm/#quickstart
 
-## Installation via helm, including the generation of certs
+## Installation and deployment via helm, including the generation of certs
 
 Consider the following an annotated session demonstrating how to deploy SCF/UAA on kubernetes. In other words, explanations interspersed with example commands and vice versa.
 
