@@ -54,7 +54,8 @@ whereas failed requirements are prefixed with `Configuration problem detected:`.
 As mentioned before, the cluster has to have an active `kube-dns`.
 For CaaSP install and activate it with
 ```
-kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/kubedns/dns.yaml
+kubectl apply \
+  -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/kubedns/dns.yaml
 ```
 
 ## Storage Classes
