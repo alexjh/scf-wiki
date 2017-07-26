@@ -152,7 +152,7 @@ To install SCF
 
 * We now have the certificates required by the various components to talk to each other (SCF internals, UAA internals, SCF to UAA).
 
-* Use Helm to deploy UAA. Remember that the previous section gave a reference to the Helm documentation explaining how to install Helm itself. Remember also that in the Vagrant-based setup `helm` is already installed and ready.
+* Use Helm to deploy UAA. Remember that the [previous section](#helm-installation) gave a reference to the Helm documentation explaining how to install Helm itself. Remember also that in the Vagrant-based setup `helm` is already installed and ready.
    ```
    helm install helm/uaa \
      --set kube.storage_class.persistent=${STORAGECLASS} \
