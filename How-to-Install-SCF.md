@@ -2,6 +2,7 @@
 
 * [Requirements for Kube](#requirements-for-kube)
 * [Verifying the Kube](#verifying-the-kube)
+* [Kube DNS](#kube-dns)
 * [Storage Classes](#storage-classes)
 * [SUSE Web UI](#suse-web-ui)
 * [Helm installation](#helm-installation)
@@ -15,7 +16,7 @@ The various machines (`api`, `kube`, and `node`) of the kubernetes cluster must 
 
 * Kernel parameters `swapaccount=1`
 * `docker info` must not show `aufs` as the storage driver.
-* `kube-dns` must be be running and `4/4 ready`.
+* `kube-dns` must be be running and `4/4 ready`. See section [Kube DNS](#kube-dns).
 * Either `ntp` or `systemd-timesyncd` must be installed and active.
 * The kubernetes cluster must have a storage class SCF can refer to.
   See section [Storage Classes](#storage-classes).
@@ -47,6 +48,14 @@ kube-ready-state-check.sh kube
 the script will run the tests applicable to the named category.
 Positive results are prefixed with `Verified: `,
 whereas failed requirements are prefixed with `Configuration problem detected:`.
+
+## Kube DNS
+
+As mentioned before, the cluster has to have an active `kube-dns`.
+For CaaSP install and activate it with
+```
+kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/kubedns/dns.yaml
+```
 
 ## Storage Classes
 
