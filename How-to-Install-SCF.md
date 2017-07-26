@@ -178,7 +178,14 @@ To install SCF
      --set "kube.external_ip=${KUBE_HOST_IP}"
    ```
 
-* Now that SCF is deployed as well its operation can be verified by running the CF smoke and acceptance tests (in this order). This is done via
+* If the deployed SCF is not intended as a production system then its operation can be
+  verified by running the CF smoke and acceptance tests (in this order). This should
+  not be done on a production system, because (paraphrasing from https://github.com/cloudfoundry/cf-acceptance-tests/)
+  the tests are only meant for acceptance environments, and while they attempt to clean
+  up after themselves, no guarantees are made that they won't change the state of the
+  system in an undesirable way. 
+
+  To invoke the tests run the commands
    ```
    kubectl create \
       --namespace="${NAMESPACE}" \
