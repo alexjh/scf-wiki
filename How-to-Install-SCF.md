@@ -111,6 +111,12 @@ To install SCF
 
 * __Choose__ the name of the kube storage class to use, and create the class.
    See section [Storage Classes](#storage-classes) for important notes.
+
+   Note, while the class created here comes with the distribution it should only be used
+   with the vagrant setup. It is of type `hostpath`, a toy option which is usually not
+   supported by a kube setup.
+
+   We make use of it only because the example done here is based on the vagrant setup.
    ```
    export STORAGECLASS=persistent
    kubectl get storageclass persistent 2>/dev/null || {
@@ -119,11 +125,6 @@ To install SCF
        kubectl create -f -
    }
    ```
-   Note, while the class created here comes with the distribution it should only be used
-   with the vagrant setup. It is of type `hostpath`, a toy option which is usually not
-   supported by a kube setup.
-
-   We make use of it only because the example done here is based on the vagrant setup.
 
 * Save all choices to environment variables.
   These are used in the coming commands.
