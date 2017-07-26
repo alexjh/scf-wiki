@@ -184,7 +184,7 @@ To install SCF
        kubectl create -f -
    }
 
-   wget XXX/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
+   wget https://github.com/SUSE/scf/archive/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
 
    mkdir deploy
    cd    deploy
