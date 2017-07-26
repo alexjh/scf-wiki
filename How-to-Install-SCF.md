@@ -34,7 +34,7 @@ An easy way of setting up a small single-machine kubernetes cluster with all the
 
 ## Verifying the Kube
 
-For ease of verification of these requirements a script (`kube-ready-state-check.sh`) is made available which contains the necessary checks.
+For ease of verification of these requirements a script (`[kube-ready-state-check.sh](https://github.com/SUSE/scf/blob/develop/bin/dev/kube-ready-state-check.sh)`) is made available which contains the necessary checks.
 
 To get help invoke this script via
 ```
