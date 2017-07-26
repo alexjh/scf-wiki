@@ -9,7 +9,7 @@ The various machines (`api`, `kube`, and `node`) of the kubernetes cluster must 
 * The kubernetes cluster must have a storage class SCF can refer to.
 * Privileged container must be enabled in `kube-apiserver`. See https://kubernetes.io/docs/admin/kube-apiserver
 * Privileged must be enabled in `kubelet`.
-* The `systemd` setting `TasksMax` must be set to infinity.
+* The `TasksMax` property of the `containerd` service definition must be set to infinity.
 * Helm's Tiller has to be installed and active.
 
 |Category|Explanation|
