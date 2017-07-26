@@ -7,6 +7,7 @@ The various machines (`api`, `kube`, and `node`) of the kubernetes cluster must 
 * `kube-dns` must be be running and `4/4 ready`.
 * Either `ntp` or `systemd-timesyncd` must be installed and active.
 * The kubernetes cluster must have a storage class SCF can refer to.
+  See section [Storage Classes](#storage-classes).
 * Privileged container must be enabled in `kube-apiserver`. See https://kubernetes.io/docs/admin/kube-apiserver
 * Privileged must be enabled in `kubelet`.
 * The `TasksMax` property of the `containerd` service definition must be set to infinity.
@@ -35,6 +36,18 @@ kube-ready-state-check.sh kube
 the script will run the tests applicable to the named category.
 Positive results are prefixed with `Verified: `,
 whereas failed requirements are prefixed with `Configuration problem detected:`.
+
+## Storage Classes
+
+As mentioned before, the kubernetes cluster must have a storage class SCF can refer to so that its database components have a place for their persistent data.
+
+This class may have any name, with the vagrant setup using `persistent`.
+Import information on storage classes and how to create and configure them can be found at
+
+* [Dynamic Provisioning and Storage Classes in Kubernetes](http://blog.kubernetes.io/2017/03/dynamic-provisioning-and-storage-classes-kubernetes.html)
+* [Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
+
+Note, while the distribution comes with an example storage-class `persistent` of type `hostpath`, for use with the vagrant box, this is a toy option and should not be used with anything but the vagrant box. It is actually quite likely that whatever kube setup is used will not even support the type `hostpath` for storage classes, automatically preventing its use.
 
 ## SUSE Web UI
 
@@ -85,21 +98,21 @@ To install SCF
    ```
    The IP address chosen here is what the vagrant setup uses.
 
-* __Choose__ the name of the kube storage class to use.
+* __Choose__ the name of the kube storage class to use, and create the class.
+   See section [Storage Classes](#storage-classes) for important notes.
    ```
    export STORAGECLASS=persistent
-   ```
-   The class chosen here is the class created by the vagrant setup.
-
-   Further, in vagrant it is possible to create a proper class with
-   ```
    kubectl get storageclass persistent 2>/dev/null || {
        perl -p -e 's@storage.k8s.io/v1beta1@storage.k8s.io/v1@g' \
            "kube/uaa/kube-test/storage-class-host-path.yml" | \
        kubectl create -f -
    }
    ```
-   In other other environments the setup of a storage class can be more complex.
+   Note, while the class created here comes with the distribution it should only be used
+   with the vagrant setup. It is of type `hostpath`, a toy option which is usually not
+   supported by a kube setup.
+
+   We make use of it only because the example done here is based on the vagrant setup.
 
 * Save all choices to environment variables.
   These are used in the coming commands.
