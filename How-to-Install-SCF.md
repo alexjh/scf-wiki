@@ -38,7 +38,8 @@ whereas failed requirements are prefixed with `Configuration problem detected:`.
 
 ## SUSE Web UI
 
-__TODO__ __XXX__
+See https://github.com/SUSE/stratos-ui/releases
+for distributions of the console. They are based on Helm charts.
 
 ## Helm installation
 
