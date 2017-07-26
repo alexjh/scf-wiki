@@ -1,3 +1,14 @@
+## Table Of Contents
+
+* [Requirements for Kube](#requirements-for-kube)
+* [Verifying the Kube](#verifying-the-kube)
+* [Storage Classes](#storage-classes)
+* [SUSE Web UI](#suse-web-ui)
+* [Helm installation](#helm-installation)
+* [Installation and deployment via helm, including the generation of certs](#installation-and-deployment-via-helm-including-the-generation-of-certs)
+* [Removal and Cleanup via helm](#removal-and-cleanup-via-helm)
+* [CF documentation](#cf-documentation)
+
 ## Requirements for Kube
 
 The various machines (`api`, `kube`, and `node`) of the kubernetes cluster must be configured in a particular way to support the execution of `SCF`. These requirements are, in general:
@@ -238,7 +249,7 @@ To install SCF
       --filename="kube/cf/bosh-task/acceptance-tests.yml"
    ```
 
-## Removal/Cleanup via helm
+## Removal and Cleanup via helm
 
 First delete the running system at the kube level
 
