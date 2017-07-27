@@ -1,6 +1,6 @@
 ## Table Of Contents
 
-* [Requirements for Kube](#requirements-for-kube)
+* [Requirements for Kubernetes](#requirements-for-kubernetes)
 * [Verifying the Kube](#verifying-the-kube)
 * [Kube DNS](#kube-dns)
 * [Storage Classes](#storage-classes)
@@ -10,7 +10,7 @@
 * [Removal and Cleanup via helm](#removal-and-cleanup-via-helm)
 * [CF documentation](#cf-documentation)
 
-## Requirements for Kube
+## Requirements for Kubernetes
 
 The various machines (`api`, `kube`, and `node`) of the kubernetes cluster must be configured in a particular way to support the execution of `SCF`. These requirements are, in general:
 
