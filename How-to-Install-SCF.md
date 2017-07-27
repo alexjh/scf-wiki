@@ -267,6 +267,47 @@ To install SCF
       --filename="kube/cf/bosh-task/acceptance-tests.yml"
    ```
 
+* Vlad used an alternate script for SCF on CaaSP. Main difference in the configuration are domain, ip address and storageclass. Related to that his code also contains additional commands to generate and feed CEPH secrets into the kube, for use by the storageclass
+   ```
+   export DOMAIN=10.84.75.154.nip.io
+   export NAMESPACE=scf
+   export UAA_NAMESPACE=uaa
+   export CLUSTER_ADMIN_PASSWORD=changeme
+   export UAA_HOST=uaa.${DOMAIN}
+   export UAA_PORT=2793
+   export UAA_ADMIN_CLIENT_SECRET=uaa-admin-client-secret
+   export KUBE_HOST_IP=10.84.75.154
+   export STORAGECLASS=fast
+
+   mkdir certs
+   ./cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
+
+   kubectl create namespace "$UAA_NAMESPACE"
+   kubectl get secret ceph-secret -o json --namespace default | jq ".metadata.namespace = \"${UAA_NAMESPACE}\"" | kubectl create -f -
+
+   helm install helm/uaa \
+     --set kube.storage_class.persistent=${STORAGECLASS} \
+     --namespace ${UAA_NAMESPACE} \
+     --values certs/uaa-cert-values.yaml \
+     --set "env.DOMAIN=${DOMAIN}" \
+     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
+     --set "kube.external_ip=${KUBE_HOST_IP}"
+
+   kubectl create namespace "$NAMESPACE"
+   kubectl get secret ceph-secret -o json --namespace default | jq ".metadata.namespace = \"${NAMESPACE}\"" | kubectl create -f -
+
+   helm install helm/cf \
+     --set kube.storage_class.persistent=${STORAGECLASS} \
+     --namespace ${NAMESPACE} \
+     --values certs/scf-cert-values.yaml \
+     --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
+     --set "env.DOMAIN=${DOMAIN}" \
+     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
+     --set "env.UAA_HOST=${UAA_HOST}" \
+     --set "env.UAA_PORT=${UAA_PORT}" \
+     --set "kube.external_ip=${KUBE_HOST_IP}"
+   ```
+
 ## Removal and Cleanup via helm
 
 First delete the running system at the kube level
