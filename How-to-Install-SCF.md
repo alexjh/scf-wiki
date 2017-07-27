@@ -55,7 +55,7 @@ As mentioned before, the cluster has to have an active `kube-dns`.
 For CaaSP install and activate it with
 ```
 kubectl apply \
-  -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/kubedns/dns.yaml
+  -f https://raw.githubusercontent.com/SUSE/caasp-services/b0cf20ca424c41fa8eaef6d84bc5b5147e6f8b70/contrib/addons/kubedns/dns.yaml
 ```
 
 ## Storage Classes
@@ -140,15 +140,12 @@ To install SCF
   These are used in the coming commands.
 
 * Get the distribution archive from https://github.com/SUSE/scf/releases
-  For example
-   ```
-   wget https://github.com/SUSE/scf/archive/scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
-   ```
+
 * Unpack this archive in a directory your choice.
    ```
    mkdir deploy
    cd    deploy
-   unzip ../scf-linux-amd64-1.8.8-pre+cf265.618.gf989f3b.zip
+   unzip ../scf-X.Y.Z.linux-amd64.zip # for example
    ```
   We now have the helm charts for SCF and UAA in a subdirectory `helm`.
   Additional configuration files are found under `kube`.
