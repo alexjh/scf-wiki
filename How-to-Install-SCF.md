@@ -120,7 +120,19 @@ To install SCF
    ```
    The IP address chosen here is what the vagrant setup uses.
 
-* Get the distribution archive from https://github.com/SUSE/scf/releases. Extract the archive and change to the extracted directory. The following relative path references will refer to files within this archive.
+* Get the distribution archive from https://github.com/SUSE/scf/releases. Create a directory and extract the archive into it.
+  ```
+  mkdir deploy
+  cd    deploy
+  unzip ../scf-X.Y.Z.linux-amd64.zip # for example
+  ```
+  The following relative path references will refer to files within this directory
+
+* Unpack this archive in a directory your choice.
+
+  We now have the helm charts for SCF and UAA in a subdirectory `helm`.
+  Additional configuration files are found under `kube`.
+  The `scripts` directory contains helpers for cert generation.
 
 * __Choose__ the name of the kube storage class to use, and create the class.
    See section [Storage Classes](#storage-classes) for important notes.
@@ -150,16 +162,6 @@ To install SCF
 
 * Save all choices to environment variables.
   These are used in the coming commands.
-
-* Unpack this archive in a directory your choice.
-   ```
-   mkdir deploy
-   cd    deploy
-   unzip ../scf-X.Y.Z.linux-amd64.zip # for example
-   ```
-  We now have the helm charts for SCF and UAA in a subdirectory `helm`.
-  Additional configuration files are found under `kube`.
-  The `scripts` directory contains helpers for cert generation.
 
 * Create custom certs for the deployment by invoking the certification generator:
    ```
