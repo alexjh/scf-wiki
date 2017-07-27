@@ -139,7 +139,7 @@ To install SCF
        APIVERSION=storage.k8s.io/v1
    fi
    kubectl get storageclass ${STORAGECLASS} 2>/dev/null || {
-       sed kube/uaa/kube-test/storage-class-host-path.yml
+       sed kube/uaa/kube-test/storage-class-host-path.yml \
            -e "s/^  name:.*/  name: ${STORAGECLASS}/" \
            -e "s@^apiVersion:.*@apiVersion: ${APIVERSION}@g" | \
        kubectl create -f -
@@ -233,7 +233,7 @@ To install SCF
        APIVERSION=storage.k8s.io/v1
    fi
    kubectl get storageclass ${STORAGECLASS} 2>/dev/null || {
-       sed kube/uaa/kube-test/storage-class-host-path.yml
+       sed kube/uaa/kube-test/storage-class-host-path.yml \
            -e "s/^  name:.*/  name: ${STORAGECLASS}/" \
            -e "s@^apiVersion:.*@apiVersion: ${APIVERSION}@g" | \
        kubectl create -f -
