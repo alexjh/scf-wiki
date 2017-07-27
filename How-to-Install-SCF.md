@@ -14,6 +14,7 @@
 
 The various machines (`api`, `kube`, and `node`) of the kubernetes cluster must be configured in a particular way to support the execution of `SCF`. These requirements are, in general:
 
+* Kubernetes API versions 1.5.x-1.6.x
 * Kernel parameters `swapaccount=1`
 * `docker info` must not show `aufs` as the storage driver.
 * `kube-dns` must be be running and `4/4 ready`. See section [Kube DNS](#kube-dns).
@@ -126,12 +127,21 @@ To install SCF
    with the vagrant setup. It is of type `hostpath`, a toy option which is usually not
    supported by a kube setup.
 
-   We make use of it only because the example done here is based on the vagrant setup.
+   We make use of it only because the example done here is based on the vagrant setup. Note that
+   the storageclass `apiVersion` used in the manifest should either be `storage.k8s.io/v1beta1` (for
+   kubernetes 1.5.x) or `v1` (for kubernetes 1.6.x)
    ```
-   export STORAGECLASS=persistent
-   kubectl get storageclass persistent 2>/dev/null || {
-       perl -p -e 's@storage.k8s.io/v1beta1@storage.k8s.io/v1@g' \
-           "kube/uaa/kube-test/storage-class-host-path.yml" | \
+   STORAGECLASS=${STORAGECLASS:-hostpath}   
+   KUBE_MINOR_VERSION=$(kubectl version --short | grep -oE "Server Version: v1\.[0-9]+" |    sed 's/Server Version: v1\.//g')
+   if [[ $KUBE_MINOR_VERSION -eq 5 ]]; then
+       APIVERSION=storage.k8s.io/v1beta1
+   elif [[ $KUBE_MINOR_VERSION -eq 6 ]]; then
+       APIVERSION=storage.k8s.io/v1
+   fi
+   kubectl get storageclass ${STORAGECLASS} 2>/dev/null || {
+       sed kube/uaa/kube-test/storage-class-host-path.yml
+           -e "s/^  name:.*/  name: ${STORAGECLASS}/" \
+           -e "s@^apiVersion:.*@apiVersion: ${APIVERSION}@g" | \
        kubectl create -f -
    }
    ```
@@ -215,14 +225,19 @@ To install SCF
    export UAA_PORT=2793
    export UAA_ADMIN_CLIENT_SECRET=uaa-admin-client-secret
    export KUBE_HOST_IP=192.168.77.77
-   export STORAGECLASS=persistent
-
-   kubectl get storageclass persistent 2>/dev/null || {
-       perl -p -e 's@storage.k8s.io/v1beta1@storage.k8s.io/v1@g' \
-           "kube/uaa/kube-test/storage-class-host-path.yml" | \
+   STORAGECLASS=${STORAGECLASS:-hostpath}   
+   KUBE_MINOR_VERSION=$(kubectl version --short | grep -oE "Server Version: v1\.[0-9]+" |    sed 's/Server Version: v1\.//g')
+   if [[ $KUBE_MINOR_VERSION -eq 5 ]]; then
+       APIVERSION=storage.k8s.io/v1beta1
+   elif [[ $KUBE_MINOR_VERSION -eq 6 ]]; then
+       APIVERSION=storage.k8s.io/v1
+   fi
+   kubectl get storageclass ${STORAGECLASS} 2>/dev/null || {
+       sed kube/uaa/kube-test/storage-class-host-path.yml
+           -e "s/^  name:.*/  name: ${STORAGECLASS}/" \
+           -e "s@^apiVersion:.*@apiVersion: ${APIVERSION}@g" | \
        kubectl create -f -
    }
-
    wget URL-TO-SCF-ZIP-DISTRIBUTION
 
    mkdir deploy
