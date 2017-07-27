@@ -251,7 +251,7 @@ To install SCF
      --set "env.UAA_PORT=${UAA_PORT}" \
      --set "kube.external_ip=${KUBE_HOST_IP}"
 
-    # Wait for completion (pod-status -w)
+    # Wait for completion
 
     kubectl create \
       --namespace="${NAMESPACE}" \
