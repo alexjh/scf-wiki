@@ -120,6 +120,8 @@ To install SCF
    ```
    The IP address chosen here is what the vagrant setup uses.
 
+* Get the distribution archive from https://github.com/SUSE/scf/releases. Extract the archive and change to the extracted directory. The following relative path references will refer to files within this archive.
+
 * __Choose__ the name of the kube storage class to use, and create the class.
    See section [Storage Classes](#storage-classes) for important notes.
 
@@ -148,8 +150,6 @@ To install SCF
 
 * Save all choices to environment variables.
   These are used in the coming commands.
-
-* Get the distribution archive from https://github.com/SUSE/scf/releases
 
 * Unpack this archive in a directory your choice.
    ```
