@@ -218,6 +218,12 @@ To install SCF
 
 * Pulling everything together we have
    ```
+   wget URL-TO-SCF-ZIP-DISTRIBUTION
+
+   mkdir deploy
+   cd    deploy
+   unzip ../scf-X.Y.Z.linux-amd64.zip # example
+
    export DOMAIN=cf-dev.io
    export NAMESPACE=scf
    export UAA_NAMESPACE=uaa
@@ -239,11 +245,6 @@ To install SCF
            -e "s@^apiVersion:.*@apiVersion: ${APIVERSION}@g" | \
        kubectl create -f -
    }
-   wget URL-TO-SCF-ZIP-DISTRIBUTION
-
-   mkdir deploy
-   cd    deploy
-   unzip ../scf-X.Y.Z.linux-amd64.zip # example
 
    mkdir certs
    ./cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
