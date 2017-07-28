@@ -198,11 +198,10 @@ To install SCF
    ```
 
 * If the deployed SCF is not intended as a production system then its operation can be
-  verified by running the CF smoke and acceptance tests (in this order). This should
-  not be done on a production system, because (paraphrasing from https://github.com/cloudfoundry/cf-acceptance-tests/)
-  the tests are only meant for acceptance environments, and while they attempt to clean
-  up after themselves, no guarantees are made that they won't change the state of the
-  system in an undesirable way. 
+  verified by running the CF smoke and acceptance tests (in this order).
+
+  > CAUTION: tests are only meant for acceptance environments, and while they attempt to clean up after themselves, no guarantees are made that they won't change the state of the system in an undesirable way.
+  > -- https://github.com/cloudfoundry/cf-acceptance-tests/
 
   To invoke the tests run the commands
    ```
