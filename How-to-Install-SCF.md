@@ -114,11 +114,11 @@ To install SCF
    ```
    These variables hold the configuration SCF has to know about the UAA to talk to, i.e. location (host, port), and authentication
 
-* __Choose__ the IP address of the kube host.
+* __Record__ the assigned IP address of the kube host.
    ```
    export KUBE_HOST_IP=192.168.77.77
    ```
-   The IP address chosen here is what the vagrant setup uses.
+   The IP address recorded here is what the vagrant setup assigns.
 
 * Get the distribution archive from https://github.com/SUSE/scf/releases. Create a directory and extract the archive into it.
   ```
