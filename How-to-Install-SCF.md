@@ -197,6 +197,12 @@ To install SCF
      --set "kube.external_ip=${KUBE_HOST_IP}"
    ```
 
+* Wait for everything to be ready:
+   ```
+   watch -c 'kubectl get pods --all-namespaces'
+   ```
+  Stop watching when all pods show state `Running` and Ready is `n/n` (instead of `k/n`, `k < n`).
+
 * Basic operation of the deployed SCF can be verified by running the CF smoke tests.
   To invoke the tests run the command
    ```
@@ -270,7 +276,8 @@ To install SCF
      --set "env.UAA_PORT=${UAA_PORT}" \
      --set "kube.external_ip=${KUBE_HOST_IP}"
 
-    # Wait for completion
+    # Wait for readiness
+    watch -c 'kubectl get pods --all-namespaces'
 
     kubectl create \
       --namespace="${NAMESPACE}" \
