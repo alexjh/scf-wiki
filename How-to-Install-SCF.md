@@ -64,7 +64,7 @@ kubectl apply \
 As mentioned before, the kubernetes cluster must have a storage class SCF can refer to so that its database components have a place for their persistent data.
 
 This class may have any name, with the vagrant setup using `persistent`.
-Import information on storage classes and how to create and configure them can be found at
+Important information on storage classes and how to create and configure them can be found at
 
 * [Dynamic Provisioning and Storage Classes in Kubernetes](http://blog.kubernetes.io/2017/03/dynamic-provisioning-and-storage-classes-kubernetes.html)
 * [Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
