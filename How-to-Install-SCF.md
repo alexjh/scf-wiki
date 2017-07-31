@@ -40,7 +40,7 @@ For ease of verification of these requirements a script ([kube-ready-state-check
 
 To get help invoke this script via
 ```
-kube-ready-state-check.sh -v
+kube-ready-state-check.sh -h
 ```
 This will especially note the various machine categories. When invoked with the name of machine category (`api`, `kube`, and `node`), i.e. like
 ```
