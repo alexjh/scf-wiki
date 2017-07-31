@@ -160,7 +160,7 @@ To install SCF
    }
    ```
 
-* Save all choices to environment variables.
+* Save all choices to environment variables, as demonstrated in the example scripts associated with the individual points above.
   These are used in the coming commands.
 
 * Create custom certs for the deployment by invoking the certification generator:
