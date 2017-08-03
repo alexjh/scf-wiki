@@ -218,6 +218,9 @@ To install SCF
    kubectl create \
       --namespace=scf \
       --filename="kube/cf/bosh-task/smoke-tests.yml"
+
+   # Wait for completion
+   kubectl attach --namespace=scf smoke-tests
    ```
 
 * If the deployed SCF is not intended as a production system then its operation can be
@@ -231,6 +234,9 @@ To install SCF
    kubectl create \
       --namespace=scf \
       --filename="kube/cf/bosh-task/acceptance-tests.yml"
+
+   # Wait for completion
+   kubectl attach --namespace=scf acceptance-tests
    ```
 
 * Pulling everything together we have
@@ -301,10 +307,14 @@ To install SCF
       --filename="kube/cf/bosh-task/smoke-tests.yml"
 
     # Wait for completion
+    kubectl attach --namespace=scf smoke-tests
 
     kubectl create \
       --namespace=scf \
       --filename="kube/cf/bosh-task/acceptance-tests.yml"
+
+    # Wait for completion
+    kubectl attach --namespace=scf acceptance-tests
    ```
 
 * There are some slight changes when running SCF on CaaSP. Main difference in the configuration are domain, ip address, and storageclass. Related to that, there are additional commands to generate and feed CEPH secrets into the kube, for use by the storageclass:
