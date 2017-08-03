@@ -162,7 +162,7 @@ To install SCF
 
 * We now have the certificates required by the various components to talk to each other (SCF internals, UAA internals, SCF to UAA).
 
-* Generate a config file with the required settings:
+* Generate a values.yaml file with the required settings:
    ```
    cat > scf-config-values.yaml <<END
    env:
