@@ -97,28 +97,12 @@ To install SCF
    ```
    export NAMESPACE=scf
    ```
+
 * __Choose__ the `NAMESPACE` of UAA, i.e. the kube namespace the UAA components will run in later.
   This assumes that we use the UAA deployment coming with the distribution.
    ```
    export UAA_NAMESPACE=uaa
    ```
-* __Choose__ a password for your SCF deployment.
-   ```
-   export CLUSTER_ADMIN_PASSWORD=changeme
-   ```
-* __Choose__ the UAA the SCF should talk to. In this example we are using the UAA deployment coming with the SCF distribution.
-   ```
-   export UAA_HOST=uaa.${DOMAIN}
-   export UAA_PORT=2793
-   export UAA_ADMIN_CLIENT_SECRET=uaa-admin-client-secret
-   ```
-   These variables hold the configuration SCF has to know about the UAA to talk to, i.e. location (host, port), and authentication
-
-* __Record__ the assigned IP address of the kube host.
-   ```
-   export KUBE_HOST_IP=192.168.77.77
-   ```
-   The IP address recorded here is what the vagrant setup assigns.
 
 * Get the distribution archive from https://github.com/SUSE/scf/releases. Create a directory and extract the archive into it.
   ```
@@ -144,24 +128,44 @@ To install SCF
    We make use of it only because the example done here is based on the vagrant setup. Note that
    the storageclass `apiVersion` used in the manifest should either be `storage.k8s.io/v1beta1` (for
    kubernetes 1.5.x) or `v1` (for kubernetes 1.6.x)
+
+   Use kubectl to check your kubernetes server version:
    ```
-   STORAGECLASS=${STORAGECLASS:-hostpath}   
-   KUBE_MINOR_VERSION=$(kubectl version --short | grep -oE "Server Version: v1\.[0-9]+" |    sed 's/Server Version: v1\.//g')
-   if [[ $KUBE_MINOR_VERSION -eq 5 ]]; then
-       APIVERSION=storage.k8s.io/v1beta1
-   elif [[ $KUBE_MINOR_VERSION -eq 6 ]]; then
-       APIVERSION=storage.k8s.io/v1
-   fi
-   kubectl get storageclass ${STORAGECLASS} 2>/dev/null || {
-       sed kube/uaa/kube-test/storage-class-host-path.yml \
-           -e "s/^  name:.*/  name: ${STORAGECLASS}/" \
-           -e "s@^apiVersion:.*@apiVersion: ${APIVERSION}@g" | \
-       kubectl create -f -
-   }
+   kubectl version --short | grep "Server Version"
    ```
 
-* Save all choices to environment variables, as demonstrated in the example scripts associated with the individual points above.
-  These are used in the coming commands.
+   For kubernetes 1.5.x:
+   ```
+   cat > storage-class-host-path.yml <<<END
+   ---
+   kind: StorageClass
+   apiVersion: storage.k8s.io/v1beta1
+   metadata:
+     name: hostpath
+   provisioner: kubernetes.io/host-path
+   parameters:
+     path: /tmp
+   END
+   ```
+
+   For kubernetes 1.6.x:
+   ```
+   cat > storage-class-host-path.yml <<<END
+   ---
+   kind: StorageClass
+   apiVersion: v1
+   metadata:
+     name: hostpath
+   provisioner: kubernetes.io/host-path
+   parameters:
+     path: /tmp
+   END
+   ```
+
+   Create the class:
+   ```
+   kubectl create -f storage-class-host-path.yml
+   ```
 
 * Create custom certs for the deployment by invoking the certification generator:
    ```
@@ -172,15 +176,37 @@ To install SCF
 
 * We now have the certificates required by the various components to talk to each other (SCF internals, UAA internals, SCF to UAA).
 
+* Generate a config file with the required settings:
+   ```
+   env:
+     # Password for the cluster
+     CLUSTER_ADMIN_PASSWORD: changeme
+
+     # Domain for SCF. DNS for *.DOMAIN must point to the kube node's
+     # external ip. This must match the value passed to the
+     # cert-generator.sh script.
+     DOMAIN: cf-dev.io
+
+     # Password for SCF to authenticate with UAA
+     UAA_ADMIN_CLIENT_SECRET: uaa-admin-client-secret
+
+     # UAA host/port that SCF will talk to. The example values here are
+     # for the UAA deployment included with the SCF distribution.
+     UAA_HOST: uaa.cf-dev.io
+     UAA_PORT: 2793
+   kube:
+     # The IP address assigned to the kube node. The example value here
+     # is what the vagrant setup assigns
+     external_ip: 192.168.77.77
+   ```
+
 * Use Helm to deploy UAA. Remember that the [previous section](#helm-installation) gave a reference to the Helm documentation explaining how to install Helm itself. Remember also that in the Vagrant-based setup `helm` is already installed and ready.
    ```
    helm install helm/uaa \
      --set kube.storage_class.persistent=${STORAGECLASS} \
      --namespace ${UAA_NAMESPACE} \
      --values certs/uaa-cert-values.yaml \
-     --set "env.DOMAIN=${DOMAIN}" \
-     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
-     --set "kube.external_ip=${KUBE_HOST_IP}"
+     --values scf-config.yaml
    ```
 
 * With UAA deployed, use Helm to deploy SCF.
@@ -189,12 +215,7 @@ To install SCF
      --set kube.storage_class.persistent=${STORAGECLASS} \
      --namespace ${NAMESPACE} \
      --values certs/scf-cert-values.yaml \
-     --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
-     --set "env.DOMAIN=${DOMAIN}" \
-     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
-     --set "env.UAA_HOST=${UAA_HOST}" \
-     --set "env.UAA_PORT=${UAA_PORT}" \
-     --set "kube.external_ip=${KUBE_HOST_IP}"
+     --values scf-config.yaml
    ```
 
 * Wait for everything to be ready:
