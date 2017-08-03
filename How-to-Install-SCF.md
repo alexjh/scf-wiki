@@ -113,7 +113,7 @@ To install SCF
 
    We make use of it only because the example done here is based on the vagrant setup. Note that
    the storageclass `apiVersion` used in the manifest should either be `storage.k8s.io/v1beta1` (for
-   kubernetes 1.5.x) or `v1` (for kubernetes 1.6.x)
+   kubernetes 1.5.x) or `storage.k8s.io/v1` (for kubernetes 1.6.x)
 
    Use kubectl to check your kubernetes server version:
    ```
@@ -139,7 +139,7 @@ To install SCF
    cat > storage-class-host-path.yaml <<END
    ---
    kind: StorageClass
-   apiVersion: v1
+   apiVersion: storage.k8s.io/v1
    metadata:
      name: hostpath
    provisioner: kubernetes.io/host-path
@@ -246,7 +246,7 @@ To install SCF
    kind: StorageClass
    # NOTE: For kubernetes 1.5, this should be set to
    #       apiVersion: storage.k8s.io/v1beta1
-   apiVersion: v1
+   apiVersion: storage.k8s.io/v1
    metadata:
      name: hostpath
    provisioner: kubernetes.io/host-path
