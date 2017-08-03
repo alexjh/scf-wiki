@@ -71,6 +71,8 @@ Important information on storage classes and how to create and configure them ca
 
 Note, while the distribution comes with an example storage-class `persistent` of type `hostpath`, for use with the vagrant box, this is a toy option and should not be used with anything but the vagrant box. It is actually quite likely that whatever kube setup is used will not even support the type `hostpath` for storage classes, automatically preventing its use.
 
+To enable hostpath support for testing, the `kube-controller-manager` can be run with the `--enable-hostpath-provisioner` command line option.
+
 ## SUSE Web UI
 
 See https://github.com/SUSE/stratos-ui/releases
