@@ -136,7 +136,7 @@ To install SCF
 
    For kubernetes 1.5.x:
    ```
-   cat > storage-class-host-path.yml <<<END
+   cat > storage-class-host-path.yml <<END
    ---
    kind: StorageClass
    apiVersion: storage.k8s.io/v1beta1
@@ -150,7 +150,7 @@ To install SCF
 
    For kubernetes 1.6.x:
    ```
-   cat > storage-class-host-path.yml <<<END
+   cat > storage-class-host-path.yml <<END
    ---
    kind: StorageClass
    apiVersion: v1
