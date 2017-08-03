@@ -90,22 +90,6 @@ To install Helm see
 Consider the following an annotated session demonstrating how to deploy SCF/UAA on kubernetes. In other words, explanations interspersed with example commands and vice versa.
 
 To install SCF
-* __Choose__ the `DOMAIN` of SCF and use standard tools to set up the DNS
-  so the IP address where SCF is exposed is reachable under `*.DOMAIN`.
-   ```
-   export DOMAIN=cf-dev.io
-   ```
-* __Choose__ the `NAMESPACE` of SCF, i.e. the kube namespace the SCF components will run in later.
-   ```
-   export NAMESPACE=scf
-   ```
-
-* __Choose__ the `NAMESPACE` of UAA, i.e. the kube namespace the UAA components will run in later.
-  This assumes that we use the UAA deployment coming with the distribution.
-   ```
-   export UAA_NAMESPACE=uaa
-   ```
-
 * Get the distribution archive from https://github.com/SUSE/scf/releases. Create a directory and extract the archive into it.
   ```
   mkdir deploy
@@ -172,7 +156,7 @@ To install SCF
 * Create custom certs for the deployment by invoking the certification generator:
    ```
    mkdir certs
-   ./cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
+   ./cert-generator.sh -d cf-dev.io -n scf -o certs
    ```
   Note: Choosing a different output directory (`certs`) here will require matching changes to the commands deploying the helm charts, below.
 
@@ -205,8 +189,8 @@ To install SCF
 * Use Helm to deploy UAA. Remember that the [previous section](#helm-installation) gave a reference to the Helm documentation explaining how to install Helm itself. Remember also that in the Vagrant-based setup `helm` is already installed and ready.
    ```
    helm install helm/uaa \
-     --set kube.storage_class.persistent=${STORAGECLASS} \
-     --namespace ${UAA_NAMESPACE} \
+     --set kube.storage_class.persistent=hostpath \
+     --namespace uaa \
      --values certs/uaa-cert-values.yaml \
      --values scf-config.yaml
    ```
@@ -214,8 +198,8 @@ To install SCF
 * With UAA deployed, use Helm to deploy SCF.
    ```
    helm install helm/cf \
-     --set kube.storage_class.persistent=${STORAGECLASS} \
-     --namespace ${NAMESPACE} \
+     --set kube.storage_class.persistent=hostpath \
+     --namespace scf \
      --values certs/scf-cert-values.yaml \
      --values scf-config.yaml
    ```
@@ -230,7 +214,7 @@ To install SCF
   To invoke the tests run the command
    ```
    kubectl create \
-      --namespace="${NAMESPACE}" \
+      --namespace=scf \
       --filename="kube/cf/bosh-task/smoke-tests.yml"
    ```
 
@@ -243,7 +227,7 @@ To install SCF
   To invoke the tests run the command
    ```
    kubectl create \
-      --namespace="${NAMESPACE}" \
+      --namespace=scf \
       --filename="kube/cf/bosh-task/acceptance-tests.yml"
    ```
 
@@ -255,103 +239,117 @@ To install SCF
    cd    deploy
    unzip ../scf-X.Y.Z.linux-amd64.zip # example
 
-   export DOMAIN=cf-dev.io
-   export NAMESPACE=scf
-   export UAA_NAMESPACE=uaa
-   export CLUSTER_ADMIN_PASSWORD=changeme
-   export UAA_HOST=uaa.${DOMAIN}
-   export UAA_PORT=2793
-   export UAA_ADMIN_CLIENT_SECRET=uaa-admin-client-secret
-   export KUBE_HOST_IP=192.168.77.77
-   STORAGECLASS=${STORAGECLASS:-hostpath}   
-   KUBE_MINOR_VERSION=$(kubectl version --short | grep -oE "Server Version: v1\.[0-9]+" |    sed 's/Server Version: v1\.//g')
-   if [[ $KUBE_MINOR_VERSION -eq 5 ]]; then
-       APIVERSION=storage.k8s.io/v1beta1
-   elif [[ $KUBE_MINOR_VERSION -eq 6 ]]; then
-       APIVERSION=storage.k8s.io/v1
-   fi
-   kubectl get storageclass ${STORAGECLASS} 2>/dev/null || {
-       sed kube/uaa/kube-test/storage-class-host-path.yml \
-           -e "s/^  name:.*/  name: ${STORAGECLASS}/" \
-           -e "s@^apiVersion:.*@apiVersion: ${APIVERSION}@g" | \
-       kubectl create -f -
-   }
+   cat > storage-class-host-path.yaml <<END
+   ---
+   kind: StorageClass
+   # NOTE: For kubernetes 1.5, this should be set to
+   #       apiVersion: storage.k8s.io/v1beta1
+   apiVersion: v1
+   metadata:
+     name: hostpath
+   provisioner: kubernetes.io/host-path
+   parameters:
+     path: /tmp
+   END
+   kubectl create -f storage-class-host-path.yaml
 
    mkdir certs
-   ./cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
+   ./cert-generator.sh -d cf-dev.io -n scf -o certs
+
+   cat > scf-config-values.yaml <<END
+   env:
+     # Password for the cluster
+     CLUSTER_ADMIN_PASSWORD: changeme
+
+     # Domain for SCF. DNS for *.DOMAIN must point to the kube node's
+     # external ip. This must match the value passed to the
+     # cert-generator.sh script.
+     DOMAIN: cf-dev.io
+
+     # Password for SCF to authenticate with UAA
+     UAA_ADMIN_CLIENT_SECRET: uaa-admin-client-secret
+
+     # UAA host/port that SCF will talk to. The example values here are
+     # for the UAA deployment included with the SCF distribution.
+     UAA_HOST: uaa.cf-dev.io
+     UAA_PORT: 2793
+   kube:
+     # The IP address assigned to the kube node. The example value here
+     # is what the vagrant setup assigns
+     external_ip: 192.168.77.77
+   END
 
    helm install helm/uaa \
-     --set kube.storage_class.persistent=${STORAGECLASS} \
-     --namespace ${UAA_NAMESPACE} \
+     --set kube.storage_class.persistent=hostpath \
+     --namespace uaa \
      --values certs/uaa-cert-values.yaml \
-     --set "env.DOMAIN=${DOMAIN}" \
-     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
-     --set "kube.external_ip=${KUBE_HOST_IP}"
+     --values scf-config-values.yaml
 
    helm install helm/cf \
-     --set kube.storage_class.persistent=${STORAGECLASS} \
-     --namespace ${NAMESPACE} \
+     --set kube.storage_class.persistent=hostpath \
+     --namespace scf \
      --values certs/scf-cert-values.yaml \
-     --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
-     --set "env.DOMAIN=${DOMAIN}" \
-     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
-     --set "env.UAA_HOST=${UAA_HOST}" \
-     --set "env.UAA_PORT=${UAA_PORT}" \
-     --set "kube.external_ip=${KUBE_HOST_IP}"
+     --values scf-config-values.yaml
 
     # Wait for readiness
     watch -c 'kubectl get pods --all-namespaces'
 
     kubectl create \
-      --namespace="${NAMESPACE}" \
+      --namespace=scf \
       --filename="kube/cf/bosh-task/smoke-tests.yml"
 
     # Wait for completion
 
     kubectl create \
-      --namespace="${NAMESPACE}" \
+      --namespace=scf \
       --filename="kube/cf/bosh-task/acceptance-tests.yml"
    ```
 
 * Vlad used an alternate script for SCF on CaaSP. Main difference in the configuration are domain, ip address and storageclass. Related to that his code also contains additional commands to generate and feed CEPH secrets into the kube, for use by the storageclass
    ```
-   export DOMAIN=10.84.75.154.nip.io
-   export NAMESPACE=scf
-   export UAA_NAMESPACE=uaa
-   export CLUSTER_ADMIN_PASSWORD=changeme
-   export UAA_HOST=uaa.${DOMAIN}
-   export UAA_PORT=2793
-   export UAA_ADMIN_CLIENT_SECRET=uaa-admin-client-secret
-   export KUBE_HOST_IP=10.84.75.154
-   export STORAGECLASS=fast
+   cat > scf-config-values.yaml <<END
+   env:
+     # Password for the cluster
+     CLUSTER_ADMIN_PASSWORD: changeme
+
+     # Domain for SCF. DNS for *.DOMAIN must point to the kube node's
+     # external ip. This must match the value passed to the
+     # cert-generator.sh script.
+     DOMAIN: 10.84.75.154.nip.io
+
+     # Password for SCF to authenticate with UAA
+     UAA_ADMIN_CLIENT_SECRET: uaa-admin-client-secret
+
+     # UAA host/port that SCF will talk to. The example values here are
+     # for the UAA deployment included with the SCF distribution.
+     UAA_HOST: uaa.10.84.75.154.nip.io
+     UAA_PORT: 2793
+   kube:
+     # The IP address assigned to the kube node. The example value here
+     # is what the vagrant setup assigns
+     external_ip: 10.84.75.154
+   END
 
    mkdir certs
-   ./cert-generator.sh -d ${DOMAIN} -n ${NAMESPACE} -o certs
+   ./cert-generator.sh -d 10.84.75.154.nip.io -n scf -o certs
 
-   kubectl create namespace "$UAA_NAMESPACE"
-   kubectl get secret ceph-secret -o json --namespace default | jq ".metadata.namespace = \"${UAA_NAMESPACE}\"" | kubectl create -f -
+   kubectl create namespace uaa
+   kubectl get secret ceph-secret -o json --namespace default | jq ".metadata.namespace = \"uaa\"" | kubectl create -f -
 
    helm install helm/uaa \
-     --set kube.storage_class.persistent=${STORAGECLASS} \
-     --namespace ${UAA_NAMESPACE} \
+     --set kube.storage_class.persistent=fast \
+     --namespace uaa \
      --values certs/uaa-cert-values.yaml \
-     --set "env.DOMAIN=${DOMAIN}" \
-     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
-     --set "kube.external_ip=${KUBE_HOST_IP}"
+     --values scf-config-values.yaml
 
-   kubectl create namespace "$NAMESPACE"
-   kubectl get secret ceph-secret -o json --namespace default | jq ".metadata.namespace = \"${NAMESPACE}\"" | kubectl create -f -
+   kubectl create namespace scf
+   kubectl get secret ceph-secret -o json --namespace default | jq ".metadata.namespace = \"scf\"" | kubectl create -f -
 
    helm install helm/cf \
-     --set kube.storage_class.persistent=${STORAGECLASS} \
-     --namespace ${NAMESPACE} \
+     --set kube.storage_class.persistent=fast \
+     --namespace scf \
      --values certs/scf-cert-values.yaml \
-     --set "env.CLUSTER_ADMIN_PASSWORD=$CLUSTER_ADMIN_PASSWORD" \
-     --set "env.DOMAIN=${DOMAIN}" \
-     --set "env.UAA_ADMIN_CLIENT_SECRET=${UAA_ADMIN_CLIENT_SECRET}" \
-     --set "env.UAA_HOST=${UAA_HOST}" \
-     --set "env.UAA_PORT=${UAA_PORT}" \
-     --set "kube.external_ip=${KUBE_HOST_IP}"
+     --values scf-config-values.yaml
    ```
 
 ## Removal and Cleanup via helm
@@ -359,8 +357,8 @@ To install SCF
 First delete the running system at the kube level
 
 ```
-    kubectl delete namespace $UAA_NAMESPACE
-    kubectl delete namespace $NAMESPACE
+    kubectl delete namespace uaa
+    kubectl delete namespace scf
 ```
 This will especially remove all the associated volumes as well.
 
