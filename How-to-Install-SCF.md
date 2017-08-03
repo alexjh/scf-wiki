@@ -122,7 +122,7 @@ To install SCF
 
    For kubernetes 1.5.x:
    ```
-   cat > storage-class-host-path.yml <<END
+   cat > storage-class-host-path.yaml <<END
    ---
    kind: StorageClass
    apiVersion: storage.k8s.io/v1beta1
@@ -136,7 +136,7 @@ To install SCF
 
    For kubernetes 1.6.x:
    ```
-   cat > storage-class-host-path.yml <<END
+   cat > storage-class-host-path.yaml <<END
    ---
    kind: StorageClass
    apiVersion: v1
@@ -150,7 +150,7 @@ To install SCF
 
    Create the class:
    ```
-   kubectl create -f storage-class-host-path.yml
+   kubectl create -f storage-class-host-path.yaml
    ```
 
 * Create custom certs for the deployment by invoking the certification generator:
@@ -164,6 +164,7 @@ To install SCF
 
 * Generate a config file with the required settings:
    ```
+   cat > scf-config-values.yaml <<END
    env:
      # Password for the cluster
      CLUSTER_ADMIN_PASSWORD: changeme
@@ -184,6 +185,7 @@ To install SCF
      # The IP address assigned to the kube node. The example value here
      # is what the vagrant setup assigns
      external_ip: 192.168.77.77
+   END
    ```
 
 * Use Helm to deploy UAA. Remember that the [previous section](#helm-installation) gave a reference to the Helm documentation explaining how to install Helm itself. Remember also that in the Vagrant-based setup `helm` is already installed and ready.
@@ -192,7 +194,7 @@ To install SCF
      --set kube.storage_class.persistent=hostpath \
      --namespace uaa \
      --values certs/uaa-cert-values.yaml \
-     --values scf-config.yaml
+     --values scf-config-values.yaml
    ```
 
 * With UAA deployed, use Helm to deploy SCF.
@@ -201,7 +203,7 @@ To install SCF
      --set kube.storage_class.persistent=hostpath \
      --namespace scf \
      --values certs/scf-cert-values.yaml \
-     --values scf-config.yaml
+     --values scf-config-values.yaml
    ```
 
 * Wait for everything to be ready:
