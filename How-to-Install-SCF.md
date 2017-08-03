@@ -307,7 +307,7 @@ To install SCF
       --filename="kube/cf/bosh-task/acceptance-tests.yml"
    ```
 
-* Vlad used an alternate script for SCF on CaaSP. Main difference in the configuration are domain, ip address and storageclass. Related to that his code also contains additional commands to generate and feed CEPH secrets into the kube, for use by the storageclass
+* There are some slight changes when running SCF on CaaSP. Main difference in the configuration are domain, ip address, and storageclass. Related to that, there are additional commands to generate and feed CEPH secrets into the kube, for use by the storageclass:
    ```
    cat > scf-config-values.yaml <<END
    env:
@@ -317,23 +317,23 @@ To install SCF
      # Domain for SCF. DNS for *.DOMAIN must point to the kube node's
      # external ip. This must match the value passed to the
      # cert-generator.sh script.
-     DOMAIN: 10.84.75.154.nip.io
+     DOMAIN: 10.0.0.154.nip.io
 
      # Password for SCF to authenticate with UAA
      UAA_ADMIN_CLIENT_SECRET: uaa-admin-client-secret
 
      # UAA host/port that SCF will talk to. The example values here are
      # for the UAA deployment included with the SCF distribution.
-     UAA_HOST: uaa.10.84.75.154.nip.io
+     UAA_HOST: uaa.10.0.0.154.nip.io
      UAA_PORT: 2793
    kube:
      # The IP address assigned to the kube node. The example value here
      # is what the vagrant setup assigns
-     external_ip: 10.84.75.154
+     external_ip: 10.0.0.154
    END
 
    mkdir certs
-   ./cert-generator.sh -d 10.84.75.154.nip.io -n scf -o certs
+   ./cert-generator.sh -d 10.0.0.154.nip.io -n scf -o certs
 
    kubectl create namespace uaa
    kubectl get secret ceph-secret -o json --namespace default | jq ".metadata.namespace = \"uaa\"" | kubectl create -f -
