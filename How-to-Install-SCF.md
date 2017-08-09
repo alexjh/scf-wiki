@@ -190,7 +190,10 @@ To install SCF
   Stop watching when all pods show state `Running` and Ready is `n/n` (instead of `k/n`, `k < n`).
 
 * Basic operation of the deployed SCF can be verified by running the CF smoke tests.
-  To invoke the tests run the command
+
+  To invoke the tests, you must first modify the `kube/cf/bosh-task/smoke-tests.yml`'s `DOMAIN` parameter to match your config.
+
+  Then run the command
    ```
    kubectl create \
       --namespace=scf \
@@ -206,7 +209,9 @@ To install SCF
   > CAUTION: tests are only meant for acceptance environments, and while they attempt to clean up after themselves, no guarantees are made that they won't change the state of the system in an undesirable way.
   > -- https://github.com/cloudfoundry/cf-acceptance-tests/
 
-  To invoke the tests run the command
+  To invoke the tests, you must first modify the `kube/cf/bosh-task/acceptance-tests.yml`'s `DOMAIN` parameter to match your config.
+
+  Then run the command
    ```
    kubectl create \
       --namespace=scf \
