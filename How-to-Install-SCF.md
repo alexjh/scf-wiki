@@ -122,35 +122,12 @@ To install SCF
 
    For kubernetes 1.5.x:
    ```
-   cat > storage-class-host-path.yaml <<END
-   ---
-   kind: StorageClass
-   apiVersion: storage.k8s.io/v1beta1
-   metadata:
-     name: hostpath
-   provisioner: kubernetes.io/host-path
-   parameters:
-     path: /tmp
-   END
+   echo '{"kind":"StorageClass","apiVersion":"storage.k8s.io/v1beta1","metadata":{"name":"hostpath"},"provisioner":"kubernetes.io/host-path"}' | kubectl create -f -
    ```
 
    For kubernetes 1.6.x:
    ```
-   cat > storage-class-host-path.yaml <<END
-   ---
-   kind: StorageClass
-   apiVersion: storage.k8s.io/v1
-   metadata:
-     name: hostpath
-   provisioner: kubernetes.io/host-path
-   parameters:
-     path: /tmp
-   END
-   ```
-
-   Create the class:
-   ```
-   kubectl create -f storage-class-host-path.yaml
+   echo '{"kind":"StorageClass","apiVersion":"storage.k8s.io/v1","metadata":{"name":"hostpath"},"provisioner":"kubernetes.io/host-path"}' | kubectl create -f -
    ```
 
 * Create custom certs for the deployment by invoking the certification generator:
@@ -247,19 +224,9 @@ To install SCF
    cd    deploy
    unzip ../scf-X.Y.Z.linux-amd64.zip # example
 
-   cat > storage-class-host-path.yaml <<END
-   ---
-   kind: StorageClass
-   # NOTE: For kubernetes 1.5, this should be set to
-   #       apiVersion: storage.k8s.io/v1beta1
-   apiVersion: storage.k8s.io/v1
-   metadata:
-     name: hostpath
-   provisioner: kubernetes.io/host-path
-   parameters:
-     path: /tmp
-   END
-   kubectl create -f storage-class-host-path.yaml
+   # NOTE: For kubernetes 1.5, apiVersion should be set to
+   #       storage.k8s.io/v1beta1
+   echo '{"kind":"StorageClass","apiVersion":"storage.k8s.io/v1","metadata":{"name":"hostpath"},"provisioner":"kubernetes.io/host-path"}' | kubectl create -f -
 
    mkdir certs
    ./cert-generator.sh -d cf-dev.io -n scf -o certs
